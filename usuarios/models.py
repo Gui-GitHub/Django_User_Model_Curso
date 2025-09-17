@@ -8,6 +8,7 @@ class UsuarioManager(BaseUserManager):
 
     use_in_migrations = True
 
+    # Cria e salva um usuário com o e-mail e senha fornecidos
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError('O e-mail é obrigatório')
@@ -17,11 +18,13 @@ class UsuarioManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    # Cria um usuário comum
     def create_user(self, email, password=None, **extra_fields):
         # extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(email, password, **extra_fields)
 
+    # Cria um superusuário (admin)
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
@@ -43,6 +46,7 @@ class CustomUsuario(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'fone']
 
+    # Representação em string do usuário
     def __str__(self):
         return self.email
 

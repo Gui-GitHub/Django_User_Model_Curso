@@ -1,0 +1,65 @@
+Resumo sobre Django User Models:
+
+- O Django possui um modelo de usuário padrão (`django.contrib.auth.models.User`), que já oferece campos como username, password, email, first_name, last_name, além de métodos para autenticação e permissões.
+- Customização do modelo de usuário:
+  1. **Estender com perfil (OneToOneField):**
+     - Cria-se um novo modelo (ex: Profile) com campos adicionais e um relacionamento OneToOne com o User padrão.
+     - Útil quando não é necessário alterar o modelo User em si, apenas adicionar informações extras.
+     - Exemplo: adicionar campos como data de nascimento, foto de perfil, etc.
+  2. **Substituir o modelo padrão (Custom User Model):**
+     - Cria-se um novo modelo de usuário herdando de `AbstractUser` (mantém campos e métodos padrão, permite adicionar novos campos) ou `AbstractBaseUser` (modelo totalmente customizado, precisa implementar métodos e managers).
+     - Necessário definir `AUTH_USER_MODEL` no `settings.py` apontando para o novo modelo.
+     - Recomenda-se fazer isso no início do projeto, pois mudar depois pode causar problemas de migração e integridade dos dados.
+     - Permite, por exemplo, usar email como identificador principal ao invés de username.
+  3. **Adicionar campos extras ao modelo customizado:**
+     - Ao herdar de `AbstractUser`, basta adicionar os novos campos diretamente na classe.
+     - Exemplo: adicionar campo `telefone = models.CharField(max_length=20)`.
+
+- **Migrações e administração:**
+  - Após criar ou alterar o modelo de usuário, é necessário rodar as migrações (`makemigrations` e `migrate`).
+  - Para acessar e gerenciar usuários no admin, é preciso registrar o modelo customizado e, se necessário, criar um ModelAdmin customizado.
+  - O comando `createsuperuser` permite criar um usuário administrador para acessar o painel admin.
+
+- **Autenticação e permissões:**
+  - O Django fornece autenticação pronta, com métodos como `authenticate`, `login`, `logout`.
+  - Permissões podem ser definidas por grupos ou individualmente para cada usuário.
+  - Métodos úteis: `is_authenticated`, `is_staff`, `is_superuser`, `has_perm`.
+
+- **Signals:**
+  - Signals como `post_save` podem ser usadas para criar automaticamente um perfil ao criar um novo usuário.
+  - Exemplo: usar o signal para criar instância de Profile sempre que um User for criado.
+
+- **Boas práticas:**
+  - Sempre definir o modelo de usuário customizado no início do projeto.
+  - Testar autenticação, permissões e criação de usuários no admin.
+  - Documentar as alterações feitas no modelo de usuário para facilitar manutenção futura.
+
+- **Exemplo de modelo customizado:**
+  ```python
+  from django.contrib.auth.models import AbstractUser
+  from django.db import models
+
+  class CustomUser(AbstractUser):
+      telefone = models.CharField(max_length=20, blank=True)
+      data_nascimento = models.DateField(null=True, blank=True)
+  ```
+
+- **Configuração no settings.py:**
+  ```python
+  AUTH_USER_MODEL = 'app.CustomUser'
+  ```
+
+- **Exemplo de uso de signal para criar perfil:**
+  ```python
+  from django.db.models.signals import post_save
+  from django.dispatch import receiver
+  from django.contrib.auth import get_user_model
+  from .models import Profile
+
+  @receiver(post_save, sender=get_user_model())
+  def create_user_profile(sender, instance, created, **kwargs):
+      if created:
+          Profile.objects.create(user=instance)
+  ```
+
+Esses conceitos permitem criar sistemas de autenticação robustos e adaptados às necessidades do projeto Django.
