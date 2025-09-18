@@ -1,4 +1,4 @@
-# 👤 Projeto Avançado com User Models no Django
+<h1 align="center"> 👤 Projeto Avançado com User Models no Django </h1>
 
 Este repositório faz parte do curso **Programação Web com Python e Django Framework: Essencial**, ministrado pela **Geek University** na plataforma Udemy.  
 
@@ -39,7 +39,9 @@ O repositório contém os arquivos do projeto Django com as implementações de 
 - Uso de `signals` para criar perfis.  
 - Configuração no `settings.py`.  
 
-📸 *(img print estrutura)*  
+<p align="left">
+  <img width="174" height="262" alt="print_projeto" src="https://github.com/user-attachments/assets/62729ed8-9cc6-4b24-9669-089a83f6303d" alt="imgprojeto" />
+</p>
 
 ---
 
